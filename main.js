@@ -357,11 +357,26 @@ function updateFullscreen(fallback = false) {
   if (active) showTools();
 }
 
+let fallbackHistoryGuard = false;
+function closeFallbackFullscreen() {
+  if (fallbackHistoryGuard) {
+    fallbackHistoryGuard = false;
+    history.back();
+  }
+  updateFullscreen();
+}
+window.addEventListener("popstate", () => {
+  if (fallbackHistoryGuard) {
+    fallbackHistoryGuard = false;
+    updateFullscreen();
+  }
+});
+
 async function exitPlayerFullscreen() {
   if (document.fullscreenElement === playerScreen) {
     await document.exitFullscreen();
   } else {
-    updateFullscreen();
+    closeFallbackFullscreen();
   }
 }
 
@@ -373,11 +388,15 @@ fullscreenButton.addEventListener("click", async () => {
   try {
     if (!document.fullscreenEnabled || !playerScreen.requestFullscreen) {
       updateFullscreen(true);
+      history.pushState({ ...(history.state || {}), mofFullscreen: true }, "", location.href);
+      fallbackHistoryGuard = true;
       return;
     }
     await playerScreen.requestFullscreen();
   } catch {
     updateFullscreen(true);
+    history.pushState({ ...(history.state || {}), mofFullscreen: true }, "", location.href);
+    fallbackHistoryGuard = true;
     return;
   }
   if (mobileView.matches && document.fullscreenElement === playerScreen) {
@@ -391,7 +410,7 @@ document.addEventListener("fullscreenchange", () => {
   if (wasLandscape && document.fullscreenElement !== playerScreen) screen.orientation?.unlock?.();
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && playerScreen.hasAttribute("data-fullscreen-fallback")) updateFullscreen();
+  if (event.key === "Escape" && playerScreen.hasAttribute("data-fullscreen-fallback")) closeFallbackFullscreen();
 });
 
 playerScreen.addEventListener("contextmenu", event => event.preventDefault());
