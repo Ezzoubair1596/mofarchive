@@ -311,15 +311,25 @@ seek.addEventListener("input", () => {
   seek.style.setProperty("--progress", Number(seek.value) / 10 + "%");
   showTools();
 });
-seek.addEventListener("change", () => {
-  const duration = playbackDuration();
+let lastSeekValue = -1;
+let lastSeekAt = 0;
+function commitSeek(value = Number(seek.value)) {
+  const duration = Number.isFinite(player.duration) && player.duration > 0 ? player.duration : playbackDuration();
   scrubbing = false;
   if (!duration) return;
-  const target = Math.max(0, Math.min(duration * Number(seek.value) / 1000, Number.isFinite(player.duration) ? player.duration - .1 : duration));
+  if (lastSeekValue === value && performance.now() - lastSeekAt < 250) return;
+  lastSeekValue = value;
+  lastSeekAt = performance.now();
+  const target = Math.max(0, Math.min(duration * value / 1000, duration - .1));
   if (player.readyState >= HTMLMediaElement.HAVE_METADATA) player.currentTime = target;
   else player.addEventListener("loadedmetadata", () => { player.currentTime = target; }, {once:true});
   syncPlayer();
   showTools();
+}
+seek.addEventListener("change", () => commitSeek());
+seek.addEventListener("pointerup", () => {
+  const value = Number(seek.value);
+  setTimeout(() => commitSeek(value), 0);
 });
 volume.addEventListener("input", () => {
   player.volume = Number(volume.value);
@@ -1465,11 +1475,8 @@ function clearPlayer() {
 }
 
 function mobileVideoSource(source) {
-  if (!mobileView.matches) return source;
-  return source.replace(
-    /^(https:\/\/res\.cloudinary\.com\/dbo59baai\/video\/upload\/)(?=v\d+\/.*\.mp4(?:$|\?))/i,
-    "$1c_limit,w_960,h_540,br_1800k/"
-  );
+  // Preserve the original MP4's seek index and image quality on mobile.
+  return source;
 }
 
 function renderPlaylist(videos, collectionId) {
@@ -1515,6 +1522,7 @@ function renderPlaylist(videos, collectionId) {
       selectedDuration = video.duration
         ? video.duration.split(":").reduce((seconds, unit) => seconds * 60 + Number(unit), 0)
         : 0;
+      lastSeekValue = -1;
       player.dataset.originalSrc = video.src;
       player.src = mobileVideoSource(video.src);
       syncPlayer();
