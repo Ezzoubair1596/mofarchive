@@ -288,7 +288,11 @@ function syncPlayer() {
 
 function togglePlayback() {
   if (player.paused || player.ended) player.play().catch(() => {});
-  else player.pause();
+  else {
+    player.pause();
+    // On mobile, resume audio in the same user gesture as the pause tap.
+    if (mobileView.matches) syncArchiveMusic();
+  }
 }
 
 for (const event of ["timeupdate", "loadedmetadata", "durationchange", "play", "pause", "ended", "volumechange", "emptied"]) {
@@ -1381,6 +1385,8 @@ let currentSong;
 let archiveMusicEnabled = false;
 let archiveMusicUnlocked = false;
 let archiveMusicNeedsGesture = false;
+let mobilePageActive = true;
+let archivePlayPending = false;
 
 function selectNextSong() {
   if (!songQueue.length) {
@@ -1404,17 +1410,21 @@ function videoIsPlaying() {
 function syncArchiveMusic() {
   const interrupted = gameDialog.hasAttribute("open") || videoIsPlaying();
   if (interrupted && archiveMusicUnlocked && archiveMusicEnabled) resumeWithFade = true;
-  if (!archiveMusicUnlocked || !archiveMusicEnabled || interrupted) {
+  if (!archiveMusicUnlocked || !archiveMusicEnabled || interrupted || (mobileView.matches && (!mobilePageActive || document.hidden))) {
     cancelAnimationFrame(fadeFrame);
     fadeOnPlaying = false;
     archiveAudio.pause();
     return;
   }
-  if (!archiveAudio.paused) return;
+  if (!archiveAudio.paused || archivePlayPending) return;
   fadeOnPlaying = resumeWithFade;
   archiveAudio.volume = fadeOnPlaying ? 0 : archiveMusicVolume;
-  archiveAudio.play().catch(() => {
-    if (archiveMusicEnabled && !videoIsPlaying() && !gameDialog.hasAttribute("open")) {
+  archivePlayPending = true;
+  archiveAudio.play().then(() => {
+    archivePlayPending = false;
+  }).catch((error) => {
+    archivePlayPending = false;
+    if (error?.name === "NotAllowedError" && archiveMusicEnabled && !videoIsPlaying() && !gameDialog.hasAttribute("open") && mobilePageActive && !document.hidden) {
       archiveMusicNeedsGesture = true;
       updateMusicButton();
     }
@@ -1496,6 +1506,25 @@ function advanceArchiveMusic() {
   syncArchiveMusic();
 }
 archiveAudio.addEventListener("ended", advanceArchiveMusic);
+if (mobileView.matches) {
+  function suspendMobileMusic() {
+    mobilePageActive = false;
+    archiveAudio.pause();
+  }
+  function restoreMobileMusic() {
+    mobilePageActive = true;
+    if (!document.hidden) syncArchiveMusic();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) suspendMobileMusic();
+    else restoreMobileMusic();
+  });
+  window.addEventListener("pagehide", suspendMobileMusic);
+  window.addEventListener("pageshow", restoreMobileMusic);
+  window.addEventListener("blur", suspendMobileMusic);
+  window.addEventListener("focus", restoreMobileMusic);
+  document.addEventListener("freeze", suspendMobileMusic);
+}
 for (const event of ["play", "pause", "ended", "emptied"]) {
   player.addEventListener(event, syncArchiveMusic);
 }
@@ -1558,9 +1587,6 @@ function renderPlaylist(videos, collectionId) {
       emptyPanorama();showTools();
       const gameButton = byId("game-open");
       gameButton.hidden = video.title !== "DUB 2022 - TEAM 2";
-      if (!gameButton.hidden && matchMedia("(pointer: coarse)").matches) {
-        gameButton.scrollIntoView({block: "nearest"});
-      }
       player.setAttribute("aria-label", label.textContent);
       selectedDuration = video.duration
         ? video.duration.split(":").reduce((seconds, unit) => seconds * 60 + Number(unit), 0)
