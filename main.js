@@ -303,8 +303,25 @@ let wakeTouch = false;
 player.addEventListener("pointerdown", event => {
   wakeTouch = event.pointerType !== "mouse" && playerTools.classList.contains("resting");
 });
-player.addEventListener("click", () => {
-  if (!mobileView.matches && !wakeTouch) togglePlayback();
+let desktopClickTimer;
+player.addEventListener("click", (event) => {
+  if (!mobileView.matches && !wakeTouch) {
+    const bounds = player.getBoundingClientRect();
+    const side = event.clientX > bounds.left + bounds.width / 2 ? "right" : "left";
+    const now = performance.now();
+    consecutiveEdgeTaps = side === lastTapSide && now - lastEdgeTap < 420 ? consecutiveEdgeTaps + 1 : 1;
+    lastEdgeTap = now;
+    lastTapSide = side;
+    if (consecutiveEdgeTaps >= 2) {
+      clearTimeout(desktopClickTimer);
+      const step = side === "right" ? 5 : -5;
+      skipAhead(step);
+      showSkipHint(step, (consecutiveEdgeTaps - 1) * 5, side);
+    } else {
+      clearTimeout(desktopClickTimer);
+      desktopClickTimer = setTimeout(togglePlayback, 425);
+    }
+  }
   wakeTouch = false;
   showTools();
 });
@@ -317,6 +334,14 @@ const skipHint = document.createElement("span");
 skipHint.className = "skip-hint";
 skipHint.setAttribute("aria-live", "polite");
 playerScreen.querySelector(".player-surface").append(skipHint);
+function showSkipHint(step, amount, side) {
+  skipHint.style.right = side === "right" ? "18%" : "auto";
+  skipHint.style.left = side === "left" ? "18%" : "auto";
+  skipHint.textContent = (step > 0 ? "+" : "−") + amount + "s";
+  skipHint.classList.add("visible");
+  clearTimeout(skipHintTimer);
+  skipHintTimer = setTimeout(() => skipHint.classList.remove("visible"), 750);
+}
 function skipAhead(seconds) {
   if (player.readyState < HTMLMediaElement.HAVE_METADATA) {
     pendingSkipSeconds += seconds;
@@ -342,13 +367,19 @@ player.addEventListener("pointerup", (event) => {
   if (consecutiveEdgeTaps >= 2) {
     const step = side === "right" ? 5 : -5;
     skipAhead(step);
-    skipHint.style.right = side === "right" ? "18%" : "auto";
-    skipHint.style.left = side === "left" ? "18%" : "auto";
-    skipHint.textContent = (step > 0 ? "+" : "−") + (consecutiveEdgeTaps - 1) * 5 + "s";
-    skipHint.classList.add("visible");
-    clearTimeout(skipHintTimer);
-    skipHintTimer = setTimeout(() => skipHint.classList.remove("visible"), 750);
+    showSkipHint(step, (consecutiveEdgeTaps - 1) * 5, side);
   }
+  showTools();
+});
+document.addEventListener("keydown", (event) => {
+  if (mobileView.matches || player.hidden || !player.hasAttribute("src")) return;
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+  if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+  event.preventDefault();
+  const step = event.key === "ArrowRight" ? 5 : -5;
+  skipAhead(step);
+  showSkipHint(step, 5, step > 0 ? "right" : "left");
   showTools();
 });
 seek.addEventListener("input", () => {
@@ -1606,6 +1637,7 @@ for (const event of ["play", "pause", "ended", "emptied"]) {
 }
 
 function clearPlayer() {
+  clearTimeout(desktopClickTimer);
   selectedDuration = 0;
   if (playerScreen.classList.contains("is-expanded")) exitPlayerFullscreen().catch(() => {});
   byId("game-open").hidden = true;
