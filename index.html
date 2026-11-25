@@ -142,7 +142,7 @@
 .queue{min-width:0;display:flex;flex-direction:column;overflow:hidden}
 #playlist{overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--studio-tone) transparent;min-height:0;padding-inline-end:4px}
 @media(min-width:601px){.queue{contain:size;align-self:stretch}}
-@media(max-width:600px){#playlist{max-height:min(40dvh,19rem)}}
+@media(max-width:600px){#playlist{max-height:min(40dvh,19rem);padding-bottom:32px;scroll-padding-bottom:32px;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}}
 .episode{gap:7px;min-width:0}.episode span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.episode span[lang=ar]{font-size:.76rem;line-height:1.55}.episode .duration{flex:none;font-size:.68rem}
 .dub-group summary{min-height:42px;padding:11px 9px;cursor:pointer;color:var(--studio-tone);border:1px solid #ffffff24;border-radius:9px;font-size:.86rem;font-weight:750}
 .dub-group details{margin:8px 0 0 9px}.dub-group ol{padding:6px 0 0!important;overflow:visible}
