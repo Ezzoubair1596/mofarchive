@@ -357,26 +357,36 @@ function updateFullscreen(fallback = false) {
   if (active) showTools();
 }
 
-let fallbackHistoryGuard = false;
-function closeFallbackFullscreen() {
-  if (fallbackHistoryGuard) {
-    fallbackHistoryGuard = false;
-    history.back();
-  }
-  updateFullscreen();
+let fullscreenHistoryGuard = false;
+let fullscreenReturnHash = "";
+let ignoreFullscreenHash = "";
+function guardFullscreenBack() {
+  if (fullscreenHistoryGuard || !mobileView.matches) return;
+  fullscreenReturnHash = location.hash;
+  // A distinct history URL survives mobile in-app browsers that coalesce equal URLs.
+  history.pushState({ ...(history.state || {}), mofFullscreen: true }, "", fullscreenReturnHash + "/fullscreen");
+  fullscreenHistoryGuard = true;
+}
+function consumeFullscreenBack() {
+  if (!fullscreenHistoryGuard) return;
+  fullscreenHistoryGuard = false;
+  ignoreFullscreenHash = fullscreenReturnHash;
+  history.back();
 }
 window.addEventListener("popstate", () => {
-  if (fallbackHistoryGuard) {
-    fallbackHistoryGuard = false;
-    updateFullscreen();
-  }
+  if (!fullscreenHistoryGuard) return;
+  fullscreenHistoryGuard = false;
+  ignoreFullscreenHash = fullscreenReturnHash;
+  if (document.fullscreenElement === playerScreen) document.exitFullscreen().catch(() => updateFullscreen());
+  else updateFullscreen();
 });
 
 async function exitPlayerFullscreen() {
+  consumeFullscreenBack();
   if (document.fullscreenElement === playerScreen) {
     await document.exitFullscreen();
   } else {
-    closeFallbackFullscreen();
+    updateFullscreen();
   }
 }
 
@@ -388,17 +398,16 @@ fullscreenButton.addEventListener("click", async () => {
   try {
     if (!document.fullscreenEnabled || !playerScreen.requestFullscreen) {
       updateFullscreen(true);
-      history.pushState({ ...(history.state || {}), mofFullscreen: true }, "", location.href);
-      fallbackHistoryGuard = true;
+      guardFullscreenBack();
       return;
     }
     await playerScreen.requestFullscreen();
   } catch {
     updateFullscreen(true);
-    history.pushState({ ...(history.state || {}), mofFullscreen: true }, "", location.href);
-    fallbackHistoryGuard = true;
+    guardFullscreenBack();
     return;
   }
+  guardFullscreenBack();
   if (mobileView.matches && document.fullscreenElement === playerScreen) {
     // A rotated surface also covers browsers that reject orientation locking.
     try { await screen.orientation?.lock?.("landscape"); } catch {}
@@ -410,7 +419,7 @@ document.addEventListener("fullscreenchange", () => {
   if (wasLandscape && document.fullscreenElement !== playerScreen) screen.orientation?.unlock?.();
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && playerScreen.hasAttribute("data-fullscreen-fallback")) closeFallbackFullscreen();
+  if (event.key === "Escape" && playerScreen.hasAttribute("data-fullscreen-fallback")) exitPlayerFullscreen().catch(() => {});
 });
 
 playerScreen.addEventListener("contextmenu", event => event.preventDefault());
@@ -1371,6 +1380,7 @@ let songQueue = [];
 let currentSong;
 let archiveMusicEnabled = false;
 let archiveMusicUnlocked = false;
+let archiveMusicNeedsGesture = false;
 
 function selectNextSong() {
   if (!songQueue.length) {
@@ -1403,10 +1413,17 @@ function syncArchiveMusic() {
   if (!archiveAudio.paused) return;
   fadeOnPlaying = resumeWithFade;
   archiveAudio.volume = fadeOnPlaying ? 0 : archiveMusicVolume;
-  archiveAudio.play().catch(() => {});
+  archiveAudio.play().catch(() => {
+    if (archiveMusicEnabled && !videoIsPlaying() && !gameDialog.hasAttribute("open")) {
+      archiveMusicNeedsGesture = true;
+      updateMusicButton();
+    }
+  });
 }
 
 archiveAudio.addEventListener("playing", () => {
+  archiveMusicNeedsGesture = false;
+  updateMusicButton();
   if (!fadeOnPlaying) return;
   fadeOnPlaying = false;
   resumeWithFade = false;
@@ -1422,7 +1439,7 @@ archiveAudio.addEventListener("playing", () => {
 
 function updateMusicButton() {
   const playing = !archiveAudio.paused && !archiveAudio.ended;
-  const label = playing ? "إيقاف الموسيقى مؤقتاً" : "تشغيل الموسيقى";
+  const label = playing ? "إيقاف الموسيقى مؤقتاً" : archiveMusicNeedsGesture ? "اضغط لتشغيل الموسيقى" : "تشغيل الموسيقى";
   musicToggle.setAttribute("aria-label", label);
   musicToggle.title = label;
 
@@ -1467,6 +1484,12 @@ musicToggle.addEventListener("click", () => {
   if (!archiveMusicEnabled) resumeWithFade = false;
   syncArchiveMusic();
 });
+// Some mobile browsers reject the first play request even after entering.
+// Retry only after another explicit tap; respect the user's pause choice.
+document.addEventListener("click", (event) => {
+  if (event.target.closest("#music-toggle") || !archiveMusicNeedsGesture) return;
+  if (archiveMusicEnabled && !videoIsPlaying() && !gameDialog.hasAttribute("open")) syncArchiveMusic();
+});
 function advanceArchiveMusic() {
   cancelAnimationFrame(fadeFrame);
   selectNextSong();
@@ -1489,6 +1512,7 @@ function clearPlayer() {
     player.removeAttribute("src");
     player.load();
   }
+  syncArchiveMusic();
   playerError.hidden = true;
   screenMessage.hidden = false;
 }
@@ -1660,7 +1684,18 @@ document.querySelector(".explore").addEventListener("click", (event) => {
   });
 });
 search.addEventListener("input", filterCollections);
-window.addEventListener("hashchange", () => renderRoute(true));
+document.querySelector(".back").addEventListener("click", () => {
+  // Resume while the tap is still active; the hashchange arrives later.
+  player.pause();
+  syncArchiveMusic();
+});
+window.addEventListener("hashchange", () => {
+  if (ignoreFullscreenHash && location.hash === ignoreFullscreenHash) {
+    ignoreFullscreenHash = "";
+    return;
+  }
+  renderRoute(true);
+});
 const reelMode = matchMedia("(min-width:900px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)");
 const reelTrack = document.querySelector(".reel-track");
 const reelClips = ["tv-1", "dub-1", "tv-2", "dub-3", "tv-4", "dub-9", "tv-6"].map(id => ({
