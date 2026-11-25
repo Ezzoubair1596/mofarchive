@@ -248,6 +248,7 @@ const playerScreen = byId("player-screen");
 const playerClock = byId("player-clock");
 const mobileView = matchMedia("(max-width:899px), (hover:none) and (pointer:coarse)");
 let selectedDuration = 0;
+let scrubbing = false;
 
 function playbackDuration() {
   return selectedDuration || (Number.isFinite(player.duration) ? player.duration : 0);
@@ -266,11 +267,13 @@ function syncPlayer() {
   const duration = playbackDuration();
   const progress = duration ? Math.min(1, player.currentTime / duration) : 0;
   seek.disabled = !duration;
-  seek.value = Math.round(progress * 1000);
-  seek.style.setProperty("--progress", progress * 100 + "%");
-  seek.setAttribute("aria-valuetext", formatTime(player.currentTime));
-  const clock = formatTime(player.currentTime) + " / " + (duration ? formatTime(duration) : "—");
-  if (playerClock.textContent !== clock) playerClock.textContent = clock;
+  if (!scrubbing) {
+    seek.value = Math.round(progress * 1000);
+    seek.style.setProperty("--progress", progress * 100 + "%");
+    seek.setAttribute("aria-valuetext", formatTime(player.currentTime));
+    const clock = formatTime(player.currentTime) + " / " + (duration ? formatTime(duration) : "—");
+    if (playerClock.textContent !== clock) playerClock.textContent = clock;
+  }
   const stopped = player.paused || player.ended;
   playButton.toggleAttribute("data-active", !stopped);
   playButton.title = stopped ? "Play" : "Pause";
@@ -302,8 +305,21 @@ player.addEventListener("click", () => {
   showTools();
 });
 seek.addEventListener("input", () => {
+  scrubbing = true;
   const duration = playbackDuration();
-  if (duration) player.currentTime = duration * Number(seek.value) / 1000;
+  if (duration) playerClock.textContent = formatTime(duration * Number(seek.value) / 1000) + " / " + formatTime(duration);
+  seek.style.setProperty("--progress", Number(seek.value) / 10 + "%");
+  showTools();
+});
+seek.addEventListener("change", () => {
+  const duration = playbackDuration();
+  scrubbing = false;
+  if (!duration) return;
+  const target = Math.max(0, Math.min(duration * Number(seek.value) / 1000, Number.isFinite(player.duration) ? player.duration - .1 : duration));
+  if (player.readyState >= HTMLMediaElement.HAVE_METADATA) player.currentTime = target;
+  else player.addEventListener("loadedmetadata", () => { player.currentTime = target; }, {once:true});
+  syncPlayer();
+  showTools();
 });
 volume.addEventListener("input", () => {
   player.volume = Number(volume.value);
@@ -1452,7 +1468,7 @@ function mobileVideoSource(source) {
   if (!mobileView.matches) return source;
   return source.replace(
     /^(https:\/\/res\.cloudinary\.com\/dbo59baai\/video\/upload\/)(?=v\d+\/.*\.mp4(?:$|\?))/i,
-    "$1c_limit,w_640,h_480,br_800k/"
+    "$1c_limit,w_960,h_540,br_1800k/"
   );
 }
 
