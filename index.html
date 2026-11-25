@@ -267,6 +267,23 @@ body.game-open{overflow:hidden}
   .game-toolbar b{font-size:.9rem}
   #game-choices button,#game-open{min-height:44px}
 }
+#enter{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1.2;
+  text-indent:.14em;
+}
+@media(max-width:899px), (hover:none) and (pointer:coarse){
+  .intro #home-view{width:100%}
+  .intro .hero-reel{left:0;right:0;width:100%;transform:none}
+  .intro .reel-frame img{display:block;width:100%;height:100%;object-fit:cover;filter:none}
+  .has-work .atmosphere::after{animation:none}
+  .has-work .collection-head svg{animation:none}
+  .has-work .screen-shell{box-shadow:0 8px 18px #08041466}
+  .has-work .player-tools{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .has-work .ticker-track{animation-play-state:paused}
+}
 </style>
 <script defer src="./music/spectrum.js"></script>
 <script defer src="./main.js"></script>
