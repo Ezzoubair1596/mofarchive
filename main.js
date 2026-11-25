@@ -245,6 +245,14 @@ const volume = byId("player-volume");
 const muteButton = byId("player-mute");
 const fullscreenButton = byId("player-fullscreen");
 const playerScreen = byId("player-screen");
+const playerClock = byId("player-clock");
+const mobileView = matchMedia("(max-width:899px), (hover:none) and (pointer:coarse)");
+let selectedDuration = 0;
+
+function playbackDuration() {
+  return selectedDuration || (Number.isFinite(player.duration) ? player.duration : 0);
+}
+
 
 function formatTime(seconds) {
   const total = Number.isFinite(seconds) ? Math.floor(seconds) : 0;
@@ -255,13 +263,14 @@ function formatTime(seconds) {
 }
 
 function syncPlayer() {
-  const duration = Number.isFinite(player.duration) ? player.duration : 0;
-  const progress = duration ? player.currentTime / duration : 0;
+  const duration = playbackDuration();
+  const progress = duration ? Math.min(1, player.currentTime / duration) : 0;
   seek.disabled = !duration;
   seek.value = Math.round(progress * 1000);
   seek.style.setProperty("--progress", progress * 100 + "%");
   seek.setAttribute("aria-valuetext", formatTime(player.currentTime));
-  byId("player-clock").textContent = formatTime(player.currentTime) + " / " + formatTime(duration);
+  const clock = formatTime(player.currentTime) + " / " + (duration ? formatTime(duration) : "—");
+  if (playerClock.textContent !== clock) playerClock.textContent = clock;
   const stopped = player.paused || player.ended;
   playButton.toggleAttribute("data-active", !stopped);
   playButton.title = stopped ? "Play" : "Pause";
@@ -288,12 +297,13 @@ player.addEventListener("pointerdown", event => {
   wakeTouch = event.pointerType !== "mouse" && playerTools.classList.contains("resting");
 });
 player.addEventListener("click", () => {
-  if (!wakeTouch) togglePlayback();
+  if (!wakeTouch && !(mobileView.matches && playerScreen.classList.contains("is-expanded"))) togglePlayback();
   wakeTouch = false;
   showTools();
 });
 seek.addEventListener("input", () => {
-  if (Number.isFinite(player.duration)) player.currentTime = player.duration * Number(seek.value) / 1000;
+  const duration = playbackDuration();
+  if (duration) player.currentTime = duration * Number(seek.value) / 1000;
 });
 volume.addEventListener("input", () => {
   player.volume = Number(volume.value);
@@ -308,21 +318,54 @@ muteButton.addEventListener("click", () => {
     player.muted = !player.muted;
   }
 });
-fullscreenButton.disabled = !((document.fullscreenEnabled && playerScreen.requestFullscreen) || player.webkitEnterFullscreen);
+function updateFullscreen(fallback = false) {
+  const active = fallback || document.fullscreenElement === playerScreen;
+  playerScreen.classList.toggle("is-expanded", active);
+  playerScreen.toggleAttribute("data-fullscreen-fallback", fallback);
+  playerScreen.toggleAttribute("data-landscape", active && mobileView.matches);
+  document.body.classList.toggle("player-expanded", active);
+  fullscreenButton.toggleAttribute("data-active", active);
+  const label = active ? "Exit fullscreen" : "Fullscreen";
+  fullscreenButton.title = label;
+  fullscreenButton.setAttribute("aria-label", label);
+  if (active) showTools();
+}
+
+async function exitPlayerFullscreen() {
+  if (document.fullscreenElement === playerScreen) {
+    await document.exitFullscreen();
+  } else {
+    updateFullscreen();
+  }
+}
+
 fullscreenButton.addEventListener("click", async () => {
+  if (playerScreen.classList.contains("is-expanded")) {
+    await exitPlayerFullscreen().catch(() => {});
+    return;
+  }
   try {
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else if (document.fullscreenEnabled && playerScreen.requestFullscreen) await playerScreen.requestFullscreen();
-    else if (player.webkitEnterFullscreen) player.webkitEnterFullscreen();
+    if (!document.fullscreenEnabled || !playerScreen.requestFullscreen) {
+      updateFullscreen(true);
+      return;
+    }
+    await playerScreen.requestFullscreen();
   } catch {
-    if (player.webkitSupportsFullscreen) player.webkitEnterFullscreen();
+    updateFullscreen(true);
+    return;
+  }
+  if (mobileView.matches && document.fullscreenElement === playerScreen) {
+    // A rotated surface also covers browsers that reject orientation locking.
+    try { await screen.orientation?.lock?.("landscape"); } catch {}
   }
 });
 document.addEventListener("fullscreenchange", () => {
-  fullscreenButton.toggleAttribute("data-active", Boolean(document.fullscreenElement));
-  const label = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
-  fullscreenButton.title = label;
-  fullscreenButton.setAttribute("aria-label", label);
+  const wasLandscape = playerScreen.hasAttribute("data-landscape");
+  updateFullscreen(playerScreen.hasAttribute("data-fullscreen-fallback"));
+  if (wasLandscape && document.fullscreenElement !== playerScreen) screen.orientation?.unlock?.();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && playerScreen.hasAttribute("data-fullscreen-fallback")) updateFullscreen();
 });
 
 playerScreen.addEventListener("contextmenu", event => event.preventDefault());
@@ -1390,6 +1433,8 @@ for (const event of ["play", "pause", "ended", "emptied"]) {
 }
 
 function clearPlayer() {
+  selectedDuration = 0;
+  if (playerScreen.classList.contains("is-expanded")) exitPlayerFullscreen().catch(() => {});
   byId("game-open").hidden = true;
   closeGame();
   player.hidden = true;
@@ -1402,8 +1447,6 @@ function clearPlayer() {
   playerError.hidden = true;
   screenMessage.hidden = false;
 }
-
-const mobileView = matchMedia("(max-width:899px), (hover:none) and (pointer:coarse)");
 
 function mobileVideoSource(source) {
   if (!mobileView.matches) return source;
@@ -1453,8 +1496,12 @@ function renderPlaylist(videos, collectionId) {
         gameButton.scrollIntoView({block: "nearest"});
       }
       player.setAttribute("aria-label", label.textContent);
+      selectedDuration = video.duration
+        ? video.duration.split(":").reduce((seconds, unit) => seconds * 60 + Number(unit), 0)
+        : 0;
       player.dataset.originalSrc = video.src;
       player.src = mobileVideoSource(video.src);
+      syncPlayer();
       player.play().catch(() => {
         // If autoplay is restricted, the play button stays available.
       });
@@ -1576,10 +1623,20 @@ const reelTrack = document.querySelector(".reel-track");
 const reelClips = ["tv-1", "dub-1", "tv-2", "dub-3", "tv-4", "dub-9", "tv-6"].map(id => ({
   src: "./clips/"+id+".mp4", poster: "./clips/"+id+".jpg"
 }));
+const visibleReelPreviews = new Set();
+const reelObserver = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    const preview = entry.target.querySelector("video");
+    if (entry.isIntersecting) visibleReelPreviews.add(preview);
+    else visibleReelPreviews.delete(preview);
+  }
+  syncPreviews();
+}, {root: byId("home-view").querySelector(".hero-reel"), rootMargin: "0px 10%"});
+
 function syncPreviews() {
   const shouldPlay = !document.hidden && !home.hidden;
   for (const preview of reelTrack.querySelectorAll("video")) {
-    if (shouldPlay) preview.play().catch(() => {});
+    if (shouldPlay && visibleReelPreviews.has(preview)) preview.play().catch(() => {});
     else preview.pause();
   }
 }
@@ -1587,6 +1644,8 @@ function syncPreviews() {
 function setupReel() {
   if (!reelMode.matches && !document.body.classList.contains("intro")) {
     for (const preview of reelTrack.querySelectorAll("video")) preview.pause();
+    reelObserver.disconnect();
+    visibleReelPreviews.clear();
     reelTrack.replaceChildren();
     return;
   }
@@ -1597,21 +1656,12 @@ function setupReel() {
   for (const clip of reelClips) {
     const frame = document.createElement("div");
     frame.className = "reel-frame";
-    if (mobileView.matches) {
-      const still = new Image();
-      still.src = clip.poster;
-      still.alt = "";
-      still.decoding = "async";
-      frame.append(still);
-      group.append(frame);
-      continue;
-    }
     const preview = document.createElement("video");
     preview.muted = true;
     preview.defaultMuted = true;
     preview.loop = true;
     preview.playsInline = true;
-    preview.preload = "auto";
+    preview.preload = "none";
     preview.poster = clip.poster;
 
     preview.src = clip.src;
@@ -1619,7 +1669,10 @@ function setupReel() {
     group.append(frame);
   }
   reelTrack.append(group, group.cloneNode(true));
-  for (const preview of reelTrack.querySelectorAll("video")) preview.muted = true;
+  for (const frame of reelTrack.querySelectorAll(".reel-frame")) {
+    frame.querySelector("video").muted = true;
+    reelObserver.observe(frame);
+  }
   syncPreviews();
 }
 reelMode.addEventListener("change", setupReel);
