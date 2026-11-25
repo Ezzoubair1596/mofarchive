@@ -1403,6 +1403,16 @@ function clearPlayer() {
   screenMessage.hidden = false;
 }
 
+const mobileView = matchMedia("(max-width:899px), (hover:none) and (pointer:coarse)");
+
+function mobileVideoSource(source) {
+  if (!mobileView.matches) return source;
+  return source.replace(
+    /^(https:\/\/res\.cloudinary\.com\/dbo59baai\/video\/upload\/)(?=v\d+\/.*\.mp4(?:$|\?))/i,
+    "$1c_limit,w_640,h_480,br_800k/"
+  );
+}
+
 function renderPlaylist(videos, collectionId) {
   playlist.replaceChildren();
   playlist.scrollTop = 0;
@@ -1443,7 +1453,8 @@ function renderPlaylist(videos, collectionId) {
         gameButton.scrollIntoView({block: "nearest"});
       }
       player.setAttribute("aria-label", label.textContent);
-      player.src = video.src;
+      player.dataset.originalSrc = video.src;
+      player.src = mobileVideoSource(video.src);
       player.play().catch(() => {
         // If autoplay is restricted, the play button stays available.
       });
@@ -1513,7 +1524,7 @@ function renderRoute(moveFocus) {
       button?.click();
     } else drawPanorama(collection);
     collectionView.getAnimations().forEach((animation) => animation.cancel());
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!mobileView.matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       collectionView.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 360, easing: "ease-out" });
     }
     window.scrollTo(0, 0);
@@ -1532,6 +1543,14 @@ function renderRoute(moveFocus) {
 
 player.addEventListener("error", () => {
   if (!player.hasAttribute("src")) return;
+  const original = player.dataset.originalSrc;
+  if (original && player.getAttribute("src") !== original) {
+    const position = player.currentTime;
+    player.src = original;
+    if (position > 0) player.currentTime = position;
+    player.play().catch(() => {});
+    return;
+  }
   playerError.textContent = "This video could not be loaded. Check its link or choose another video.";
   playerError.hidden = false;
 });
@@ -1540,6 +1559,15 @@ document.querySelector(".archive-banner").addEventListener("click", (event) => {
     event.preventDefault();
     renderRoute(true);
   }
+});
+document.querySelector(".explore").addEventListener("click", (event) => {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  if (location.hash !== "#collections") history.pushState(null, "", "#collections");
+  byId("directory-title").focus({preventScroll: true});
+  byId("collections").scrollIntoView({
+    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
+  });
 });
 search.addEventListener("input", filterCollections);
 window.addEventListener("hashchange", () => renderRoute(true));
@@ -1569,6 +1597,15 @@ function setupReel() {
   for (const clip of reelClips) {
     const frame = document.createElement("div");
     frame.className = "reel-frame";
+    if (mobileView.matches) {
+      const still = new Image();
+      still.src = clip.poster;
+      still.alt = "";
+      still.decoding = "async";
+      frame.append(still);
+      group.append(frame);
+      continue;
+    }
     const preview = document.createElement("video");
     preview.muted = true;
     preview.defaultMuted = true;
@@ -1616,7 +1653,7 @@ function drawPanorama(collection) {
       failures = 0;
       const old = panorama.lastElementChild;
       panorama.append(image);
-      const reducedMotion = matchMedia("(prefers-reduced-motion:reduce)").matches;
+      const reducedMotion = mobileView.matches || matchMedia("(prefers-reduced-motion:reduce)").matches;
       if (!reducedMotion) {
         // Keep both frames moving until the incoming frame has fully covered the old one.
         image.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }],
@@ -1626,7 +1663,7 @@ function drawPanorama(collection) {
         const fade = image.animate([{opacity:0},{opacity:1}], {duration:950,easing:"ease-in-out"});
         fade.onfinish = () => old.remove();
       } else old?.remove();
-      if (collection.videos.length > 1) slideTimer = setTimeout(advance, 3000);
+      if (!mobileView.matches && collection.videos.length > 1) slideTimer = setTimeout(advance, 3000);
     };
     image.onerror = () => {
       if (generation === slideGeneration && ++failures < collection.videos.length) slideTimer = setTimeout(advance, 150);
@@ -1661,7 +1698,7 @@ byId("enter").addEventListener("click",()=>{
   const end=logo.getBoundingClientRect();
   if(end.width && !matchMedia("(prefers-reduced-motion: reduce)").matches){
     const reelEnd=reel.getBoundingClientRect();
-    if(reelEnd.height) reel.animate([{translate:"0 "+(reelStart.top-reelEnd.top)+"px",scale:"1 "+reelStart.height/reelEnd.height,transformOrigin:"top center"},{translate:"0 0",scale:"1 1",transformOrigin:"top center"}],{duration:680,easing:"ease-out"});
+    if(!mobileView.matches && reelEnd.height) reel.animate([{translate:"0 "+(reelStart.top-reelEnd.top)+"px",scale:"1 "+reelStart.height/reelEnd.height,transformOrigin:"top center"},{translate:"0 0",scale:"1 1",transformOrigin:"top center"}],{duration:680,easing:"ease-out"});
     logo.animate([{transformOrigin:"top left",transform:"translate("+(start.left-end.left)+"px,"+(start.top-end.top)+"px) scale("+start.width/end.width+")"},{transformOrigin:"top left",transform:"none"}],{duration:680,easing:"cubic-bezier(.22,.8,.25,1)"});
   }
   setTimeout(()=>document.body.classList.remove("arriving"),900);
