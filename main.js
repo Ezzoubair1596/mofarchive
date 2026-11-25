@@ -308,8 +308,9 @@ player.addEventListener("click", () => {
   wakeTouch = false;
   showTools();
 });
-let lastRightTap = 0;
-let consecutiveRightTaps = 0;
+let lastEdgeTap = 0;
+let consecutiveEdgeTaps = 0;
+let lastTapSide = "";
 let pendingSkipSeconds = 0;
 let skipHintTimer;
 const skipHint = document.createElement("span");
@@ -321,29 +322,29 @@ function skipAhead(seconds) {
     pendingSkipSeconds += seconds;
     player.addEventListener("loadedmetadata", () => {
       const duration = Number.isFinite(player.duration) ? player.duration : playbackDuration();
-      player.currentTime = Math.min(Math.max(0, duration - .1), player.currentTime + pendingSkipSeconds);
+      player.currentTime = Math.max(0, Math.min(Math.max(0, duration - .1), player.currentTime + pendingSkipSeconds));
       pendingSkipSeconds = 0;
     }, {once:true});
     return;
   }
   const duration = Number.isFinite(player.duration) ? player.duration : playbackDuration();
-  player.currentTime = Math.min(Math.max(0, duration - .1), player.currentTime + seconds);
+  player.currentTime = Math.max(0, Math.min(Math.max(0, duration - .1), player.currentTime + seconds));
   syncPlayer();
 }
 player.addEventListener("pointerup", (event) => {
   if (!mobileView.matches || event.pointerType === "mouse") return;
   const bounds = player.getBoundingClientRect();
   const now = performance.now();
-  if (event.clientX <= bounds.left + bounds.width / 2) {
-    consecutiveRightTaps = 0;
-    showTools();
-    return;
-  }
-  consecutiveRightTaps = now - lastRightTap < 420 ? consecutiveRightTaps + 1 : 1;
-  lastRightTap = now;
-  if (consecutiveRightTaps >= 2) {
-    skipAhead(5);
-    skipHint.textContent = "+" + (consecutiveRightTaps - 1) * 5 + "s";
+  const side = event.clientX > bounds.left + bounds.width / 2 ? "right" : "left";
+  consecutiveEdgeTaps = side === lastTapSide && now - lastEdgeTap < 420 ? consecutiveEdgeTaps + 1 : 1;
+  lastEdgeTap = now;
+  lastTapSide = side;
+  if (consecutiveEdgeTaps >= 2) {
+    const step = side === "right" ? 5 : -5;
+    skipAhead(step);
+    skipHint.style.right = side === "right" ? "18%" : "auto";
+    skipHint.style.left = side === "left" ? "18%" : "auto";
+    skipHint.textContent = (step > 0 ? "+" : "−") + (consecutiveEdgeTaps - 1) * 5 + "s";
     skipHint.classList.add("visible");
     clearTimeout(skipHintTimer);
     skipHintTimer = setTimeout(() => skipHint.classList.remove("visible"), 750);
@@ -1533,6 +1534,14 @@ for (const event of ["pause", "waiting", "ended", "emptied"]) {
 
 musicToggle.addEventListener("click", () => {
   if (gameDialog.hasAttribute("open") || videoIsPlaying()) return;
+  if (mobileView.matches && (!mobilePageActive || archiveAudio.muted)) {
+    mobilePageActive = true;
+    mobileFocusObserved = document.hasFocus();
+    archiveAudio.muted = false;
+    archiveMusicEnabled = true;
+    syncArchiveMusic();
+    return;
+  }
   archiveMusicEnabled = archiveAudio.paused;
   if (!archiveMusicEnabled) resumeWithFade = false;
   syncArchiveMusic();
@@ -1554,15 +1563,26 @@ if (mobileView.matches) {
     mobilePageActive = false;
     archiveAudio.muted = true;
     archiveAudio.pause();
+    gameMusic?.pause();
+    gameVoice?.pause();
   }
   function restoreMobileMusic() {
     mobilePageActive = true;
-    if (document.hasFocus()) mobileFocusObserved = true;
+    mobileFocusObserved = document.hasFocus();
     if (!document.hidden) {
       archiveAudio.muted = false;
       syncArchiveMusic();
     }
   }
+  function resumeAfterMobileTap(event) {
+    if (document.hidden) return;
+    if (event.target.closest("#music-toggle")) return;
+    if (!mobilePageActive || archiveAudio.muted) restoreMobileMusic();
+    else if (archiveMusicEnabled && archiveAudio.paused && !videoIsPlaying() && !gameDialog.hasAttribute("open") && !event.target.closest("#music-toggle, #player-tools, #player, .episode")) syncArchiveMusic();
+  }
+  document.addEventListener("pointerdown", resumeAfterMobileTap, {capture:true});
+  document.addEventListener("touchstart", resumeAfterMobileTap, {capture:true,passive:true});
+  document.addEventListener("click", resumeAfterMobileTap);
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) suspendMobileMusic();
     else restoreMobileMusic();
@@ -1647,8 +1667,9 @@ function renderPlaylist(videos, collectionId) {
       selectedDuration = video.duration
         ? video.duration.split(":").reduce((seconds, unit) => seconds * 60 + Number(unit), 0)
         : 0;
-      lastRightTap = 0;
-      consecutiveRightTaps = 0;
+      lastEdgeTap = 0;
+      consecutiveEdgeTaps = 0;
+      lastTapSide = "";
       pendingSkipSeconds = 0;
       skipHint.classList.remove("visible");
       lastSeekValue = -1;
