@@ -128,6 +128,35 @@ const collections = [
 ];
 
 const byId = (id) => document.getElementById(id);
+function replaceContents(element, ...children) {
+  if (typeof element.replaceChildren === "function") element.replaceChildren(...children);
+  else {
+    while (element.firstChild) element.removeChild(element.firstChild);
+    for (const child of children) element.appendChild(child);
+  }
+}
+function observeMediaQuery(query, listener) {
+  if (typeof query.addEventListener === "function") query.addEventListener("change", listener);
+  else if (typeof query.addListener === "function") query.addListener(listener);
+}
+function animateIfSupported(element, frames, options) {
+  if (typeof element.animate !== "function") return null;
+  try { return element.animate(frames, options); } catch (_) { return null; }
+}
+let fallbackWorkEntry = false;
+function writeArchiveRoute(destination, state, replace = false) {
+  try {
+    history[replace ? "replaceState" : "pushState"](state, "", destination);
+    return true;
+  } catch (_) {
+    // Some embedded browsers restrict the History API but still support hashes.
+    if (location.hash === destination) return true;
+    if (state && state.mofWork && !replace) fallbackWorkEntry = true;
+    if (replace) location.replace(destination);
+    else location.hash = destination;
+    return false;
+  }
+}
 const tickerTrack = document.querySelector(".ticker-track");
 const tickerGroup = document.createElement("span");
 tickerGroup.className = "ticker-group";
@@ -155,7 +184,7 @@ function addTickerMessage(isHint = false) {
 for (let repeat = 0; repeat < 8; repeat++) addTickerMessage();
 addTickerMessage(true);
 for (let repeat = 0; repeat < 9; repeat++) addTickerMessage();
-tickerTrack.replaceChildren(tickerGroup, tickerGroup.cloneNode(true));
+replaceContents(tickerTrack, tickerGroup, tickerGroup.cloneNode(true));
 const secretCollection = {id:"deep-web",label:"DEEP WEB",tone:"#60f4d8",wash:"#195361",videos:[
   {"title": "CLASSIFIED 01", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720949/VID-20210205-WA0095.mp4"},
   {"title": "CLASSIFIED 02", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720942/VID-20210615-WA0016.mp4"},
@@ -242,8 +271,9 @@ async function filterCollections() {
   const incoming = searching ? results : directory;
   if (!outgoing.hidden) {
     if (!reducedMotion) {
-      await outgoing.animate([{opacity:1},{opacity:0}],
-        {duration:250,easing:"ease-in-out"}).finished.catch(() => {});
+      const animation = animateIfSupported(outgoing, [{opacity:1},{opacity:0}],
+        {duration:250,easing:"ease-in-out"});
+      if (animation && animation.finished) await animation.finished.catch(() => {});
     }
     if (generation !== searchTransition) return;
     outgoing.hidden = true;
@@ -251,7 +281,7 @@ async function filterCollections() {
   if (generation !== searchTransition) return;
   empty.hidden = true;
   if (searching) {
-    results.replaceChildren();
+    replaceContents(results);
     results.scrollTop = 0;
     for (const collection of collections) {
       for (const [index, video] of collection.videos.entries()) {
@@ -274,7 +304,7 @@ async function filterCollections() {
   const wasHidden = incoming.hidden;
   incoming.hidden = searching && !results.childElementCount;
   if (wasHidden && !incoming.hidden && !reducedMotion) {
-    incoming.animate([{opacity:0},{opacity:1}], {duration:300,easing:"ease-in-out"});
+    animateIfSupported(incoming, [{opacity:0},{opacity:1}], {duration:300,easing:"ease-in-out"});
   }
 }
 
@@ -1371,7 +1401,7 @@ function gameScene(id) {
   art.classList.toggle("game-title", id === "menu" || Boolean(scene.ending));
   byId("game-ending").textContent = scene.ending || "";
   byId("game-text").textContent = scene.text || "";
-  gameChoices.replaceChildren();
+  replaceContents(gameChoices);
 
   const choices = scene.choices || [["عاود اللعب", "menu"]];
   function showChoices() {
@@ -1517,7 +1547,7 @@ function placeMusicPanel() {
   else document.querySelector(".foot .bar").insertBefore(musicPanel, byId("facebook-page"));
   requestAnimationFrame(measureMusicTitle);
 }
-mobileView.addEventListener("change", placeMusicPanel);
+observeMediaQuery(mobileView, placeMusicPanel);
 window.addEventListener("resize", measureMusicTitle);
 placeMusicPanel();
 const spectrumBars = document.querySelectorAll(".music-spectrum span");
@@ -1557,12 +1587,14 @@ function selectNextSong() {
     old.textContent = previousTitle;
     old.style.fontSize = getComputedStyle(musicTitleInner).fontSize;
     musicTitle.append(old);
-    old.animate([{transform:"translateY(0)",opacity:1},{transform:"translateY(120%)",opacity:0}], {duration:520,easing:"ease-in-out"}).onfinish = () => old.remove();
+    const animation = animateIfSupported(old, [{transform:"translateY(0)",opacity:1},{transform:"translateY(120%)",opacity:0}], {duration:520,easing:"ease-in-out"});
+    if (animation) animation.onfinish = () => old.remove();
+    else old.remove();
   }
   musicTitleInner.textContent = currentSong.title;
   musicTitle.title = currentSong.title;
   requestAnimationFrame(measureMusicTitle);
-  if (animateTitle) musicTitleInner.animate([{transform:"translateY(-120%)",opacity:0},{transform:"translateY(0)",opacity:1}], {duration:600,easing:"cubic-bezier(.22,1,.36,1)"});
+  if (animateTitle) animateIfSupported(musicTitleInner, [{transform:"translateY(-120%)",opacity:0},{transform:"translateY(0)",opacity:1}], {duration:600,easing:"cubic-bezier(.22,1,.36,1)"});
 }
 
 function videoIsPlaying() {
@@ -1749,7 +1781,7 @@ function mobileVideoSource(source) {
 }
 
 function renderPlaylist(videos, collectionId) {
-  playlist.replaceChildren();
+  replaceContents(playlist);
   playlist.scrollTop = 0;
   byId("video-count").textContent = videos.length + (videos.length === 1 ? " video" : " videos");
   byId("playlist-empty").hidden = videos.length > 0;
@@ -1839,6 +1871,7 @@ function renderRoute(moveFocus) {
   const [route, requested] = location.hash.slice(1).split("/");
   const index = collections.findIndex((collection) => collection.id === route);
   const collection = route === "deep-web" ? secretCollection : collections[index];
+  if (!collection) fallbackWorkEntry = false;
   clearPlayer();
   document.body.classList.toggle("has-work", Boolean(collection));
   document.body.classList.toggle("deep-web", collection === secretCollection);
@@ -1861,7 +1894,7 @@ function renderRoute(moveFocus) {
       titleIcon.innerHTML = '<path d="M6 10V7a6 6 0 0 1 12 0v3M3 11h18v9H3zM9 15h6m-3-3v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>';
     }
     titleIcon.setAttribute("aria-hidden", "true");
-    sectionTitle.replaceChildren(titleIcon, titleText);
+    replaceContents(sectionTitle, titleIcon, titleText);
     renderPlaylist(collection.videos.filter((video) => typeof video.src === "string" && video.src.trim()), collection.id);
     const chosen=collection.videos[Number(requested)-1];
     if(chosen){
@@ -1871,9 +1904,9 @@ function renderRoute(moveFocus) {
       }
       button?.click();
     } else if (collection !== secretCollection) drawPanorama(collection);
-    collectionView.getAnimations().forEach((animation) => animation.cancel());
+    if (typeof collectionView.getAnimations === "function") collectionView.getAnimations().forEach((animation) => animation.cancel());
     if (!mobileView.matches && collection !== secretCollection && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      collectionView.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 360, easing: "ease-out" });
+      animateIfSupported(collectionView, [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 360, easing: "ease-out" });
     }
     window.scrollTo(0, 0);
     if (moveFocus) sectionTitle.focus({ preventScroll: true });
@@ -1906,38 +1939,72 @@ document.querySelector(".explore").addEventListener("click", (event) => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
   if (location.hash !== "#collections") {
-    if (mobileView.matches) history.replaceState({mofHome:true}, "", "#collections");
-    else history.pushState(null, "", "#collections");
+    if (mobileView.matches) writeArchiveRoute("#collections", {mofHome:true}, true);
+    else writeArchiveRoute("#collections", null);
   }
   byId("directory-title").focus({preventScroll: true});
   byId("collections").scrollIntoView({
     behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
   });
 });
+function normalizedSearchCode(value) {
+  const text = typeof value.normalize === "function" ? value.normalize("NFKC") : value;
+  return text.replace(/[\u0660-\u0669\u06f0-\u06f9\uff10-\uff19]/g, digit => {
+    const point = digit.charCodeAt(0);
+    return String(point - (point <= 0x0669 ? 0x0660 : point <= 0x06f9 ? 0x06f0 : 0xff10));
+  }).replace(/[\s\u061c\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/g, "");
+}
+let openingSecret = false;
+let lastSearchValue = search.value;
+let searchWatcher = null;
 function openSecretIfMatched() {
-  const code = search.value.trim().replace(/[\u0660-\u0669\u06f0-\u06f9]/g, digit =>
-    String(digit.charCodeAt(0) - (digit.charCodeAt(0) <= 0x0669 ? 0x0660 : 0x06f0)));
-  if (code === "201527" && location.hash !== "#deep-web") {
-    ++searchTransition;
-    search.value = "";
-    search.blur();
-    links.hidden = false;
-    byId("video-hits").hidden = true;
-    byId("video-hits").replaceChildren();
-    byId("no-results").hidden = true;
-    if (mobileView.matches) {
-      if (history.state?.mofWork) history.replaceState({mofWork:true}, "", "#deep-web");
-      else history.pushState({mofWork:true}, "", "#deep-web");
-    } else history.pushState(null, "", "#deep-web");
-    renderRoute(true);
-    return true;
+  if (openingSecret || home.hidden || document.body.classList.contains("intro")) return false;
+  if (normalizedSearchCode(search.value) === "201527") {
+    openingSecret = true;
+    try {
+      ++searchTransition;
+      search.value = "";
+      lastSearchValue = "";
+      search.blur();
+      links.hidden = false;
+      byId("video-hits").hidden = true;
+      replaceContents(byId("video-hits"));
+      byId("no-results").hidden = true;
+      const written = writeArchiveRoute("#deep-web", mobileView.matches ? {mofWork:true} : null,
+        mobileView.matches && (fallbackWorkEntry || Boolean(history.state && history.state.mofWork)));
+      if (written) renderRoute(true);
+      return true;
+    } finally { openingSecret = false; }
   }
   return false;
 }
-search.addEventListener("input", () => { if (!openSecretIfMatched()) filterCollections(); });
-for (const eventName of ["keyup", "change", "search", "compositionend"]) {
-  search.addEventListener(eventName, openSecretIfMatched);
+function checkSearchValue() {
+  if (openingSecret || home.hidden) return;
+  if (openSecretIfMatched()) return;
+  if (search.value !== lastSearchValue) {
+    lastSearchValue = search.value;
+    filterCollections();
+  }
 }
+for (const eventName of ["input", "keyup", "change", "search", "compositionend"]) {
+  search.addEventListener(eventName, checkSearchValue);
+}
+for (const eventName of ["beforeinput", "paste", "drop"]) {
+  search.addEventListener(eventName, () => setTimeout(checkSearchValue, 0));
+}
+search.addEventListener("keydown", event => {
+  if (event.key === "Enter" && openSecretIfMatched()) event.preventDefault();
+});
+// A focused field can change without an input event in some mobile WebViews.
+search.addEventListener("focus", () => {
+  clearInterval(searchWatcher);
+  searchWatcher = setInterval(checkSearchValue, 120);
+});
+search.addEventListener("blur", () => {
+  clearInterval(searchWatcher);
+  searchWatcher = null;
+  checkSearchValue();
+});
 document.querySelector(".back").addEventListener("click", () => {
   // Resume while the tap is still active; the hashchange arrives later.
   player.pause();
@@ -1953,15 +2020,13 @@ document.addEventListener("click", (event) => {
   const isWork = collectionId === "deep-web" || collections.some(collection => collection.id === collectionId);
   if (!isWork && destination !== "#collections" && destination !== "#home") return;
   event.preventDefault();
+  const workEntry = fallbackWorkEntry || Boolean(history.state && history.state.mofWork);
   if (isWork) {
-    if (history.state?.mofWork) history.replaceState({mofWork:true}, "", destination);
-    else history.pushState({mofWork:true}, "", destination);
-    renderRoute(true);
-  } else if (history.state?.mofWork) {
+    if (writeArchiveRoute(destination, {mofWork:true}, workEntry)) renderRoute(true);
+  } else if (workEntry) {
     history.back();
   } else {
-    history.replaceState({mofHome:true}, "", destination);
-    renderRoute(true);
+    if (writeArchiveRoute(destination, {mofHome:true}, true)) renderRoute(true);
   }
 });
 window.addEventListener("hashchange", () => {
@@ -1977,14 +2042,14 @@ const reelClips = ["tv-1", "dub-1", "tv-2", "dub-3", "tv-4", "dub-9", "tv-6"].ma
   src: "./clips/"+id+".mp4", poster: "./clips/"+id+".jpg"
 }));
 const visibleReelPreviews = new Set();
-const reelObserver = new IntersectionObserver((entries) => {
+const reelObserver = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
   for (const entry of entries) {
     const preview = entry.target.querySelector("video");
     if (entry.isIntersecting) visibleReelPreviews.add(preview);
     else visibleReelPreviews.delete(preview);
   }
   syncPreviews();
-}, {root: byId("home-view").querySelector(".hero-reel"), rootMargin: "0px 10%"});
+}, {root: byId("home-view").querySelector(".hero-reel"), rootMargin: "0px 10%"}) : null;
 
 function syncPreviews() {
   const shouldPlay = !document.hidden && !home.hidden;
@@ -1997,9 +2062,9 @@ function syncPreviews() {
 function setupReel() {
   if (!reelMode.matches && !document.body.classList.contains("intro")) {
     for (const preview of reelTrack.querySelectorAll("video")) preview.pause();
-    reelObserver.disconnect();
+    if (reelObserver) reelObserver.disconnect();
     visibleReelPreviews.clear();
-    reelTrack.replaceChildren();
+    replaceContents(reelTrack);
     return;
   }
   if (reelTrack.firstChild) return;
@@ -2024,11 +2089,11 @@ function setupReel() {
   reelTrack.append(group, group.cloneNode(true));
   for (const frame of reelTrack.querySelectorAll(".reel-frame")) {
     frame.querySelector("video").muted = true;
-    reelObserver.observe(frame);
+    if (reelObserver) reelObserver.observe(frame);
   }
   syncPreviews();
 }
-reelMode.addEventListener("change", setupReel);
+observeMediaQuery(reelMode, setupReel);
 document.addEventListener("visibilitychange", syncPreviews);
 let idleTimer;
 function showTools() {
@@ -2044,7 +2109,7 @@ let slideGeneration = 0;
 function emptyPanorama() {
   clearTimeout(slideTimer);
   slideGeneration++;
-  panorama.replaceChildren();
+  replaceContents(panorama);
 }
 function drawPanorama(collection) {
   const generation = slideGeneration;
@@ -2062,12 +2127,13 @@ function drawPanorama(collection) {
       const reducedMotion = mobileView.matches || matchMedia("(prefers-reduced-motion:reduce)").matches;
       if (!reducedMotion) {
         // Keep both frames moving until the incoming frame has fully covered the old one.
-        image.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }],
+        animateIfSupported(image, [{ transform: "scale(1)" }, { transform: "scale(1.08)" }],
           { duration: 8000, easing: "linear", iterations: Infinity, direction: "alternate" });
       }
       if (old && !reducedMotion) {
-        const fade = image.animate([{opacity:0},{opacity:1}], {duration:950,easing:"ease-in-out"});
-        fade.onfinish = () => old.remove();
+        const fade = animateIfSupported(image, [{opacity:0},{opacity:1}], {duration:950,easing:"ease-in-out"});
+        if (fade) fade.onfinish = () => old.remove();
+        else old.remove();
       } else old?.remove();
       if (!mobileView.matches && collection.videos.length > 1) slideTimer = setTimeout(advance, 3000);
     };
@@ -2092,8 +2158,9 @@ byId("enter").addEventListener("click",()=>{
   const logo=document.querySelector(".hero-brand");
   const start=logo.getBoundingClientRect();
   const reel=document.querySelector(".hero-reel"), reelStart=reel.getBoundingClientRect();
-  history.replaceState({mofHome:true}, "", location.pathname + location.search + "#home");
+  writeArchiveRoute("#home", {mofHome:true}, true);
   search.value = "";
+  lastSearchValue = "";
   filterCollections();
   document.body.classList.remove("intro");document.body.classList.add("arriving");
   setTimeout(() => document.body.classList.add("ticker-ready"), 65000);
@@ -2105,8 +2172,8 @@ byId("enter").addEventListener("click",()=>{
   const end=logo.getBoundingClientRect();
   if(end.width && !matchMedia("(prefers-reduced-motion: reduce)").matches){
     const reelEnd=reel.getBoundingClientRect();
-    if(!mobileView.matches && reelEnd.height) reel.animate([{translate:"0 "+(reelStart.top-reelEnd.top)+"px",scale:"1 "+reelStart.height/reelEnd.height,transformOrigin:"top center"},{translate:"0 0",scale:"1 1",transformOrigin:"top center"}],{duration:680,easing:"ease-out"});
-    logo.animate([{transformOrigin:"top left",transform:"translate("+(start.left-end.left)+"px,"+(start.top-end.top)+"px) scale("+start.width/end.width+")"},{transformOrigin:"top left",transform:"none"}],{duration:680,easing:"cubic-bezier(.22,.8,.25,1)"});
+    if(!mobileView.matches && reelEnd.height) animateIfSupported(reel,[{translate:"0 "+(reelStart.top-reelEnd.top)+"px",scale:"1 "+reelStart.height/reelEnd.height,transformOrigin:"top center"},{translate:"0 0",scale:"1 1",transformOrigin:"top center"}],{duration:680,easing:"ease-out"});
+    animateIfSupported(logo,[{transformOrigin:"top left",transform:"translate("+(start.left-end.left)+"px,"+(start.top-end.top)+"px) scale("+start.width/end.width+")"},{transformOrigin:"top left",transform:"none"}],{duration:680,easing:"cubic-bezier(.22,.8,.25,1)"});
   }
   setTimeout(()=>document.body.classList.remove("arriving"),900);
   (home.hidden ? sectionTitle : byId("directory-title")).focus({preventScroll:true});
