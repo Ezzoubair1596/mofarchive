@@ -5,42 +5,42 @@
 // The duration is optional.
 const collections = [
   { id: "tv", tone: "#ffa36c", wash: "#87472d", label: "MOF TV", videos: [
-    {"title": "MOF Tv 2024 (NEW)", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557839/MOF_TV_2024_dr4dtm.mp4", "duration": "14:22"},
-    {"title": "MOF Tv 01", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557798/MOF_Tv_1_-_MARS_2020_hc9mn7.mp4", "duration": "9:19"},
-    {"title": "MOF Tv 02", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557800/MOF_Tv_2_-_APRIL_2020_gatd8c.mp4", "duration": "7:00"},
+    {"title": "MOF Tv 2024 (Latest)", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557839/MOF_TV_2024_dr4dtm.mp4", "duration": "14:22"},
+    {"title": "MOF Tv 01", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720347/MOF_Tv_1_-_MARS_2020.mp4", "duration": "9:19"},
+    {"title": "MOF Tv 02", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720350/MOF_Tv_2_-_APRIL_2020.mp4", "duration": "7:00"},
     {"title": "MOF Tv 03", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795559112/MOF-Tv-3-MAI-2020-compressed_le8e5t.mp4", "duration": "16:15"},
-    {"title": "MOF Tv 04", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795559131/MOF-Tv-4-MAI-2021-compressed_bus1ux.mp4", "duration": "22:38"},
+    {"title": "MOF Tv 04", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720598/MOF_Tv_THE_BIG_SHOW_-_compressed.mp4", "duration": "22:38"},
     {"title": "MOF Tv 05", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795559119/MOF-TV-5-DEC-2021-compressed_vdupi0.mp4", "duration": "20:02"},
     {"title": "OLD Tv 2017", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557790/OLD_MOF_Tv_-_2018_ab4yvy.mp4", "duration": "9:13"},
     {"title": "OLD Tv 2018", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557782/OLD_MOF_Tv_-_2019_m9nywa.mp4", "duration": "10:33"}
   ] },
   { id: "reports", tone: "#d2acff", wash: "#513477", label: "MOF REPORTS", videos: [
-    {"title": "MOF REPORTS - Ep 01", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553725/MOF_REPORTS_-_EP01_hsbpgp.mp4", "duration": "5:10"},
-    {"title": "MOF REPORTS - Ep 02", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553703/MOF_REPORTS_-_EP02_txhsr1.mp4", "duration": "5:23"},
-    {"title": "MOF REPORTS - Ep 03", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553753/MOF_REPORTS_-_EP03_zjrof9.mp4", "duration": "7:30"},
-    {"title": "MOF REPORTS - Ep 04", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553754/MOF_REPORTS_-_EP04_it3yhz.mp4", "duration": "6:17"},
-    {"title": "MOF REPORTS - Ep 05", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553749/MOF_REPORTS_-_EP05_gv66mk.mp4", "duration": "6:40"},
-    {"title": "MOF REPORTS - Ep 06 END", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553737/MOF_REPORTS_-_EP06_END_eve0i3.mp4", "duration": "6:08"}
+    {"title": "MOF REPORTS - Ep 01", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718473/MOF_REPORTS_-_EP01.mp4", "duration": "5:10"},
+    {"title": "MOF REPORTS - Ep 02", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718464/MOF_REPORTS_-_EP02.mp4", "duration": "5:23"},
+    {"title": "MOF REPORTS - Ep 03", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718477/MOF_REPORTS_-_EP03.mp4", "duration": "7:30"},
+    {"title": "MOF REPORTS - Ep 04", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718478/MOF_REPORTS_-_EP04.mp4", "duration": "6:17"},
+    {"title": "MOF REPORTS - Ep 05", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718478/MOF_REPORTS_-_EP05.mp4", "duration": "6:40"},
+    {"title": "MOF REPORTS - Ep 06 END", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718476/MOF_REPORTS_-_EP06_END.mp4", "duration": "6:08"}
   ] },
   { id: "tapes", tone: "#81d9f2", wash: "#285a68", label: "MOF TAPES", videos: [
-    {"title": "MOF TAPES - 01", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554604/MOF_TAPES_01_nu3ah4.mp4", "duration": "10:58"},
-    {"title": "MOF TAPES - 02", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554616/MOF_TAPES_02_qrt0ds.mp4", "duration": "12:57"},
-    {"title": "MOF TAPES - 03", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554610/MOF_TAPES_03_uhpbsi.mp4", "duration": "9:27"}
+    {"title": "MOF TAPES - 01", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795719064/MOF_TAPES_01.mp4", "duration": "10:58"},
+    {"title": "MOF TAPES - 02", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795719059/MOF_TAPES_02.mp4", "duration": "12:57"},
+    {"title": "MOF TAPES - 03", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795719071/MOF_TAPES_03.mp4", "duration": "9:27"}
   ] },
   { id: "dub", tone: "#ffa0cb", wash: "#793650", label: "MOF DUB", videos: [
     {"title": "DUB 2019 - SNK", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552086/DUB_2019_-_SNK_pzskep.mp4", "duration": "6:50"},
     {"title": "DUB 2020 - CLASS", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552088/DUB_2020_-_CLASS_ph01pg.mp4", "duration": "16:02"},
-    {"title": "DUB 2021 - TEAM 1", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552108/DUB_2021_-_TEAM_1_ct1xmo.mp4", "duration": "10:45"},
-    {"title": "DUB 2021 - TEAM 2", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552110/DUB_2021_-_TEAM_2_lpyva0.mp4", "duration": "9:18"},
-    {"title": "DUB 2021 - TEAM 3", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552060/DUB_2021_-_TEAM_3_mlmvde.mp4", "duration": "7:17"},
-    {"title": "DUB 2021 - TEAM 4", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552055/DUB_2021_-_TEAM_4_xaersf.mp4", "duration": "4:56"},
+    {"title": "DUB 2021 - TEAM 1", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720751/DUB_2021_-_TEAM_1.mp4", "duration": "10:45"},
+    {"title": "DUB 2021 - TEAM 2", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795717631/MOF_DUB_DREAM_TEAM_FINAL.mp4", "duration": "9:18"},
+    {"title": "DUB 2021 - TEAM 3", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720734/DUB_2021_-_TEAM_3.mp4", "duration": "7:17"},
+    {"title": "DUB 2021 - TEAM 4", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720734/DUB_2021_-_TEAM_4.mp4", "duration": "4:56"},
     {"title": "DUB 2022 - PRIME 1", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552106/DUB_2022_-_PRIME_1_qkntvf.mp4", "duration": "16:40"},
     {"title": "DUB 2022 - PRIME 2", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552104/DUB_2022_-_PRIME_2_cm0ixx.mp4", "duration": "15:05"},
     {"title": "DUB 2022 - PRIME 3", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552105/DUB_2022_-_PRIME_3_a85rzj.mp4", "duration": "14:26"},
     {"title": "DUB 2022 - PRIME 4", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795553454/Dub_2022_-_Prime_4_pkqgpq.mp4", "duration": "17:07"},
-    {"title": "DUB 2022 - TEAM 1", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552096/DUB_2022_-_TEAM_1_autllq.mp4", "duration": "8:11"},
-    {"title": "DUB 2022 - TEAM 2", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552037/DUB_2022_-_TEAM_2_u1lfj7.mp4", "duration": "1:26"},
-    {"title": "DUB 2022 - TEAM 3", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552096/DUB_2022_-_TEAM_3_yiqa4f.mp4", "duration": "7:46"}
+    {"title": "DUB 2022 - TEAM 1", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720465/DUB_2022_-_TEAM_1.mp4", "duration": "8:11"},
+    {"title": "DUB 2022 - TEAM 2", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720449/DUB_2022_-_TEAM_2.mp4", "duration": "1:26"},
+    {"title": "DUB 2022 - TEAM 3", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720470/DUB_2022_-_TEAM_3.mp4", "duration": "7:46"}
   ] },
   { id: "news", tone: "#f4ce78", wash: "#765726", label: "MOF NEWS", videos: [
     {"title": "MOF NEWS 1", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795557579/Mof_News_1_wjq6oj.mp4", "duration": "12:12"},
@@ -68,31 +68,31 @@ const collections = [
     {"title": "المكالمة الموفية - الحلقة الأخيرة", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795552418/%D8%A7%D9%84%D9%85%D9%83%D8%A7%D9%84%D9%85%D8%A9_%D8%A7%D9%84%D9%85%D9%88%D9%81%D9%8A%D8%A9_-_%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9_7_cvrqp1.mp4", "duration": "7:45"}
   ] },
   { id: "serie", tone: "#ff8d82", wash: "#77383c", label: "MOF SERIE", title: "شبحان و روح واحدة", videos: [
-    {"title": "شبحان و روح واحدة - الحلقة الأولى", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554806/two_ghosts_and_one_spirit_-_01_powi9b.mp4", "duration": "8:09"},
-    {"title": "شبحان و روح واحدة - الحلقة الثانية", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554807/two_ghosts_and_one_spirit_-_02_ylvi7u.mp4", "duration": "13:25"},
-    {"title": "شبحان و روح واحدة - الحلقة الثالثة", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554805/two_ghosts_and_one_spirit_-_03_co1aki.mp4", "duration": "9:55"},
-    {"title": "شبحان و روح واحدة - الحلقة الرابعة", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554808/two_ghosts_and_one_spirit_-_04_sgwjza.mp4", "duration": "10:02"},
-    {"title": "شبحان و روح واحدة - الحلقة الخامسة", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554830/two_ghosts_and_one_spirit_-_05_xofeke.mp4", "duration": "20:11"}
+    {"title": "شبحان و روح واحدة - الحلقة الأولى", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720005/two_ghosts_and_one_spirit_-_01.mp4", "duration": "8:09"},
+    {"title": "شبحان و روح واحدة - الحلقة الثانية", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720007/two_ghosts_and_one_spirit_-_02.mp4", "duration": "13:25"},
+    {"title": "شبحان و روح واحدة - الحلقة الثالثة", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720007/two_ghosts_and_one_spirit_-_03.mp4", "duration": "9:55"},
+    {"title": "شبحان و روح واحدة - الحلقة الرابعة", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720007/two_ghosts_and_one_spirit_-_04.mp4", "duration": "10:02"},
+    {"title": "شبحان و روح واحدة - الحلقة الخامسة", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720017/two_ghosts_and_one_spirit_-_05.mp4", "duration": "20:11"}
   ] },
   { id: "stories", tone: "#f6a9ed", wash: "#71376f", label: "MOF STORIES", videos: [
-    {"title": "MOF STORIES - Teaser", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554113/MOF_STORIES_Pv_bnkucn.mp4", "duration": "0:15"},
-    {"title": "MOF STORIES - EP01", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554137/MOF_Stories_-_EP01_yfh6s5.mp4", "duration": "11:43"},
-    {"title": "MOF STORIES - EP02", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554123/MOF_Stories_-_EP02_nu6b4h.mp4", "duration": "8:45"},
-    {"title": "MOF STORIES - EP03", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554125/MOF_Stories_-_EP03_h5pkj1.mp4", "duration": "13:03"},
-    {"title": "MOF STORIES - EP04", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554124/MOF_Stories_-_EP04_rbvhm0.mp4", "duration": "8:48"},
+    {"title": "MOF STORIES - Teaser", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718282/MOF_STORIES_Pv.mp4", "duration": "0:15"},
+    {"title": "MOF STORIES - EP01", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718296/MOF_Stories_-_EP01.mp4", "duration": "11:43"},
+    {"title": "MOF STORIES - EP02", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718290/MOF_Stories_-_EP02.mp4", "duration": "8:45"},
+    {"title": "MOF STORIES - EP03", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718293/MOF_Stories_-_EP03.mp4", "duration": "13:03"},
+    {"title": "MOF STORIES - EP04", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795718293/MOF_Stories_-_EP04.mp4", "duration": "8:48"},
     {"title": "MOF STORIES - EP05", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554197/MOF_Stories_-_EP05_pdowkk.mp4", "duration": "12:39"}
   ] },
   { id: "comments", tone: "#c7df87", wash: "#536639", label: "MOF COMMENTS", title: "TOP MOF COMMENTS", videos: [
-    {"title": "Top Mof Comments 1", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554709/Top_Mof_Comments_1_xugwq8.mp4", "duration": "6:10"},
-    {"title": "Top Mof Comments 2", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554694/Top_Mof_Comments_2_cxeocq.mp4", "duration": "5:56"},
-    {"title": "Top Mof Comments 3", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554714/Top_Mof_Comments_3_kdz9jf.mp4", "duration": "5:28"},
-    {"title": "Top Mof Comments 4", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554710/Top_Mof_Comments_4_akuo6n.mp4", "duration": "8:02"},
+    {"title": "Top Mof Comments 1", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720142/Top_Mof_Comments_1.mp4", "duration": "6:10"},
+    {"title": "Top Mof Comments 2", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720136/Top_Mof_Comments_2.mp4", "duration": "5:56"},
+    {"title": "Top Mof Comments 3", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720145/Top_Mof_Comments_3.mp4", "duration": "5:28"},
+    {"title": "Top Mof Comments 4", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720153/Top_Mof_Comments_4.mp4", "duration": "8:02"},
     {"title": "Top Mof Comments 5", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554743/Top_Mof_Comments_5_m2yfsm.mp4", "duration": "7:31"}
   ] },
   { id: "voice-over", tone: "#9caaff", wash: "#414b81", label: "MOF VOICE OVER", videos: [
     {"title": "العابر الأخير", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795555420/%D8%A7%D9%84%D8%B9%D8%A7%D8%A8%D8%B1_%D8%A7%D9%84%D8%A3%D8%AE%D9%8A%D8%B1_lh4n5r.mp4", "duration": "2:03"},
     {"title": "كفاح روح", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795561734/kifah-rouh_j3vj75.mp4", "duration": "10:55"},
-    {"title": "أفضل 5 أفلام موسيقية", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795554940/TOP_5_MUSICAL_MOVIES_kqktdx.mp4", "duration": "11:10"}
+    {"title": "أفضل 5 أفلام موسيقية", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720598/TOP_5_MUSICAL_MOVIES_-_compressed.mp4", "duration": "11:10"}
   ] },
   { id: "randoms", tone: "#ffb38d", wash: "#794a45", label: "MOF RANDOMS", title: "عشوائيات", videos: [
     {"title": "Wissada chan Review 1", "src": "https://res.cloudinary.com/dbo59baai/video/upload/v1795556413/Wissada_chan_Review_di93l4.mp4", "duration": "2:51"},
@@ -128,6 +128,46 @@ const collections = [
 ];
 
 const byId = (id) => document.getElementById(id);
+const tickerTrack = document.querySelector(".ticker-track");
+const tickerGroup = document.createElement("span");
+tickerGroup.className = "ticker-group";
+const tickerMessage = "أرشيف مجموعة موف من سنة 2017 إلى سنة 2024";
+function addTickerMessage(isHint = false) {
+  const message = document.createElement("span");
+  message.className = "ticker-item";
+  message.dir = "rtl";
+  if (isHint) {
+    message.classList.add("ticker-hint");
+    const ordinary = document.createElement("span");
+    ordinary.className = "ticker-default";
+    ordinary.textContent = tickerMessage;
+    const hint = document.createElement("span");
+    hint.className = "ticker-secret";
+    hint.textContent = "للدخول للصفحة السرية اكتب في خانة البحث الكود 201527";
+    message.append(ordinary, hint);
+  } else message.textContent = tickerMessage;
+  const star = document.createElement("span");
+  star.className = "ticker-icon";
+  star.textContent = "✦";
+  tickerGroup.append(message, star);
+}
+// With rightward scrolling, the last nine ordinary messages reach the screen first.
+for (let repeat = 0; repeat < 8; repeat++) addTickerMessage();
+addTickerMessage(true);
+for (let repeat = 0; repeat < 9; repeat++) addTickerMessage();
+tickerTrack.replaceChildren(tickerGroup, tickerGroup.cloneNode(true));
+const secretCollection = {id:"deep-web",label:"DEEP WEB",tone:"#60f4d8",wash:"#195361",videos:[
+  {"title": "CLASSIFIED 01", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720949/VID-20210205-WA0095.mp4"},
+  {"title": "CLASSIFIED 02", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720942/VID-20210615-WA0016.mp4"},
+  {"title": "CLASSIFIED 03", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720943/VID-20211106-WA0157.mp4"},
+  {"title": "CLASSIFIED 04", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720941/VID-20200613-WA0141.mp4"},
+  {"title": "CLASSIFIED 05", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720941/VID-20201005-WA0135.mp4"},
+  {"title": "CLASSIFIED 06", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720941/VID-20201117-WA0006.mp4"},
+  {"title": "CLASSIFIED 07", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720940/VID-20220105-WA0042.mp4"},
+  {"title": "CLASSIFIED 08", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720940/VID-20211119-WA0092.mp4"},
+  {"title": "CLASSIFIED 09", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720940/VID-20211130-WA0075.mp4"},
+  {"title": "CLASSIFIED 10", "src": "https://res.cloudinary.com/mrheyuzx/video/upload/v1795720939/VID-20211120-WA0042.mp4"}
+]};
 const home = byId("home-view");
 const collectionView = byId("collection-view");
 const search = byId("search");
@@ -246,6 +286,7 @@ const muteButton = byId("player-mute");
 const fullscreenButton = byId("player-fullscreen");
 const playerScreen = byId("player-screen");
 const playerClock = byId("player-clock");
+const replayButton = byId("player-replay");
 const mobileView = matchMedia("(max-width:899px), (hover:none) and (pointer:coarse)");
 let selectedDuration = 0;
 let scrubbing = false;
@@ -264,6 +305,7 @@ function formatTime(seconds) {
 }
 
 function syncPlayer() {
+  replayButton.hidden = !player.ended || !player.hasAttribute("src");
   const duration = playbackDuration();
   const progress = duration ? Math.min(1, player.currentTime / duration) : 0;
   seek.disabled = !duration;
@@ -299,6 +341,12 @@ for (const event of ["timeupdate", "loadedmetadata", "durationchange", "play", "
   player.addEventListener(event, syncPlayer);
 }
 playButton.addEventListener("click", togglePlayback);
+replayButton.addEventListener("click", () => {
+  player.currentTime = 0;
+  replayButton.hidden = true;
+  player.play().catch(() => {});
+  showTools();
+});
 let wakeTouch = false;
 player.addEventListener("pointerdown", event => {
   wakeTouch = event.pointerType !== "mouse" && playerTools.classList.contains("resting");
@@ -1440,11 +1488,38 @@ const archiveSongs = [
   {title: "قناص المدينة – أيمن وكوثر وهناء", file: "city-hunter"},
   {title: "فارسات الليل – كوثر وهناء", file: "night-riders"},
   {title: "إيروكا – لن أعود للوراء", file: "eureka"},
-  {title: "هكذا هي الحياة – نهيلة", file: "life"}
+  {title: "هكذا هي الحياة – نهيلة", file: "life"},
+  {title: "أبطال الديجيتال - يحيى، أيمن، وئام و نهيلة", file: "digimon-mof"}
 ];
 const archiveAudio = byId("archive-audio");
 const musicToggle = byId("music-toggle");
 const musicTitle = byId("music-title");
+const musicTitleInner = musicTitle.querySelector(".music-title-inner");
+document.addEventListener("gesturestart", event => event.preventDefault(), {passive:false});
+document.addEventListener("touchmove", event => {
+  if (event.touches.length > 1) event.preventDefault();
+}, {passive:false});
+const musicPanel = document.querySelector(".archive-music");
+const musicDock = document.createElement("div");
+musicDock.className = "music-dock";
+document.querySelector(".main").append(musicDock);
+function measureMusicTitle() {
+  musicTitleInner.style.fontSize = "";
+  const available = Math.max(1, musicTitle.clientWidth - 4);
+  const natural = musicTitleInner.scrollWidth;
+  if (natural > available) {
+    const base = parseFloat(getComputedStyle(musicTitleInner).fontSize);
+    musicTitleInner.style.fontSize = Math.max(8, base * available / natural) + "px";
+  }
+}
+function placeMusicPanel() {
+  if (mobileView.matches) musicDock.append(musicPanel);
+  else document.querySelector(".foot .bar").insertBefore(musicPanel, byId("facebook-page"));
+  requestAnimationFrame(measureMusicTitle);
+}
+mobileView.addEventListener("change", placeMusicPanel);
+window.addEventListener("resize", measureMusicTitle);
+placeMusicPanel();
 const spectrumBars = document.querySelectorAll(".music-spectrum span");
 const spectrumMotion = matchMedia("(prefers-reduced-motion: reduce)");
 let spectrumFrame;
@@ -1473,8 +1548,21 @@ function selectNextSong() {
   }
   currentSong = songQueue.shift();
   archiveAudio.src = "./music/" + currentSong.file + ".mp3";
-  musicTitle.textContent = currentSong.title;
+  musicTitle.querySelectorAll(".music-title-old").forEach(node => node.remove());
+  const previousTitle = musicTitleInner.textContent;
+  const animateTitle = !!previousTitle && previousTitle !== "مشغّل الموسيقى";
+  if (animateTitle) {
+    const old = document.createElement("span");
+    old.className = "music-title-old";
+    old.textContent = previousTitle;
+    old.style.fontSize = getComputedStyle(musicTitleInner).fontSize;
+    musicTitle.append(old);
+    old.animate([{transform:"translateY(0)",opacity:1},{transform:"translateY(120%)",opacity:0}], {duration:520,easing:"ease-in-out"}).onfinish = () => old.remove();
+  }
+  musicTitleInner.textContent = currentSong.title;
   musicTitle.title = currentSong.title;
+  requestAnimationFrame(measureMusicTitle);
+  if (animateTitle) musicTitleInner.animate([{transform:"translateY(-120%)",opacity:0},{transform:"translateY(0)",opacity:1}], {duration:600,easing:"cubic-bezier(.22,1,.36,1)"});
 }
 
 function videoIsPlaying() {
@@ -1638,6 +1726,7 @@ for (const event of ["play", "pause", "ended", "emptied"]) {
 
 function clearPlayer() {
   clearTimeout(desktopClickTimer);
+  replayButton.hidden = true;
   selectedDuration = 0;
   if (playerScreen.classList.contains("is-expanded")) exitPlayerFullscreen().catch(() => {});
   byId("game-open").hidden = true;
@@ -1689,6 +1778,7 @@ function renderPlaylist(videos, collectionId) {
       playlist.querySelector('[aria-pressed="true"]')?.setAttribute("aria-pressed", "false");
       button.setAttribute("aria-pressed", "true");
       playerError.hidden = true;
+      replayButton.hidden = true;
       screenMessage.hidden = true;
       player.hidden = false;
       playerTools.hidden = false;
@@ -1748,9 +1838,10 @@ function renderRoute(moveFocus) {
   emptyPanorama();
   const [route, requested] = location.hash.slice(1).split("/");
   const index = collections.findIndex((collection) => collection.id === route);
-  const collection = collections[index];
+  const collection = route === "deep-web" ? secretCollection : collections[index];
   clearPlayer();
   document.body.classList.toggle("has-work", Boolean(collection));
+  document.body.classList.toggle("deep-web", collection === secretCollection);
   document.body.style.setProperty("--studio-tone", collection?.tone || "#ff9d60");
   document.body.style.setProperty("--studio-wash", collection?.wash || "#78442d");
   home.hidden = Boolean(collection);
@@ -1764,7 +1855,11 @@ function renderRoute(moveFocus) {
     titleText.textContent = collection.title || collection.label;
     sectionTitle.lang = /[\u0600-\u06ff]/.test(titleText.textContent) ? "ar" : "en";
     sectionTitle.dir = sectionTitle.lang === "ar" ? "rtl" : "ltr";
-    const titleIcon = tiles[index].querySelector("svg").cloneNode(true);
+    const titleIcon = collection === secretCollection ? document.createElementNS(svgNS,"svg") : tiles[index].querySelector("svg").cloneNode(true);
+    if (collection === secretCollection) {
+      titleIcon.setAttribute("viewBox","0 0 24 24");
+      titleIcon.innerHTML = '<path d="M6 10V7a6 6 0 0 1 12 0v3M3 11h18v9H3zM9 15h6m-3-3v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>';
+    }
     titleIcon.setAttribute("aria-hidden", "true");
     sectionTitle.replaceChildren(titleIcon, titleText);
     renderPlaylist(collection.videos.filter((video) => typeof video.src === "string" && video.src.trim()), collection.id);
@@ -1775,9 +1870,9 @@ function renderRoute(moveFocus) {
         if(parent.tagName==="DETAILS")parent.open=true;
       }
       button?.click();
-    } else drawPanorama(collection);
+    } else if (collection !== secretCollection) drawPanorama(collection);
     collectionView.getAnimations().forEach((animation) => animation.cancel());
-    if (!mobileView.matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!mobileView.matches && collection !== secretCollection && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       collectionView.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 360, easing: "ease-out" });
     }
     window.scrollTo(0, 0);
@@ -1807,26 +1902,67 @@ player.addEventListener("error", () => {
   playerError.textContent = "This video could not be loaded. Check its link or choose another video.";
   playerError.hidden = false;
 });
-document.querySelector(".archive-banner").addEventListener("click", (event) => {
-  if (location.hash === "#collections") {
-    event.preventDefault();
-    renderRoute(true);
-  }
-});
 document.querySelector(".explore").addEventListener("click", (event) => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
-  if (location.hash !== "#collections") history.pushState(null, "", "#collections");
+  if (location.hash !== "#collections") {
+    if (mobileView.matches) history.replaceState({mofHome:true}, "", "#collections");
+    else history.pushState(null, "", "#collections");
+  }
   byId("directory-title").focus({preventScroll: true});
   byId("collections").scrollIntoView({
     behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
   });
 });
-search.addEventListener("input", filterCollections);
+function openSecretIfMatched() {
+  const code = search.value.trim().replace(/[\u0660-\u0669\u06f0-\u06f9]/g, digit =>
+    String(digit.charCodeAt(0) - (digit.charCodeAt(0) <= 0x0669 ? 0x0660 : 0x06f0)));
+  if (code === "201527" && location.hash !== "#deep-web") {
+    ++searchTransition;
+    search.value = "";
+    search.blur();
+    links.hidden = false;
+    byId("video-hits").hidden = true;
+    byId("video-hits").replaceChildren();
+    byId("no-results").hidden = true;
+    if (mobileView.matches) {
+      if (history.state?.mofWork) history.replaceState({mofWork:true}, "", "#deep-web");
+      else history.pushState({mofWork:true}, "", "#deep-web");
+    } else history.pushState(null, "", "#deep-web");
+    renderRoute(true);
+    return true;
+  }
+  return false;
+}
+search.addEventListener("input", () => { if (!openSecretIfMatched()) filterCollections(); });
+for (const eventName of ["keyup", "change", "search", "compositionend"]) {
+  search.addEventListener(eventName, openSecretIfMatched);
+}
 document.querySelector(".back").addEventListener("click", () => {
   // Resume while the tap is still active; the hashchange arrives later.
   player.pause();
   syncArchiveMusic();
+});
+document.addEventListener("click", (event) => {
+  if (!mobileView.matches || document.body.classList.contains("intro") || event.defaultPrevented) return;
+  const link = event.target.closest?.('a[href^="#"]');
+  if (!link) return;
+  const destination = link.getAttribute("href");
+  if (!destination || destination === location.hash) return;
+  const collectionId = destination.slice(1).split("/")[0];
+  const isWork = collectionId === "deep-web" || collections.some(collection => collection.id === collectionId);
+  if (!isWork && destination !== "#collections" && destination !== "#home") return;
+  event.preventDefault();
+  if (isWork) {
+    if (history.state?.mofWork) history.replaceState({mofWork:true}, "", destination);
+    else history.pushState({mofWork:true}, "", destination);
+    renderRoute(true);
+  } else if (history.state?.mofWork) {
+    history.back();
+  } else {
+    history.replaceState({mofHome:true}, "", destination);
+    renderRoute(true);
+  }
 });
 window.addEventListener("hashchange", () => {
   if (ignoreFullscreenHash && location.hash === ignoreFullscreenHash) {
@@ -1956,10 +2092,11 @@ byId("enter").addEventListener("click",()=>{
   const logo=document.querySelector(".hero-brand");
   const start=logo.getBoundingClientRect();
   const reel=document.querySelector(".hero-reel"), reelStart=reel.getBoundingClientRect();
-  history.replaceState(null, "", location.pathname + location.search + "#home");
+  history.replaceState({mofHome:true}, "", location.pathname + location.search + "#home");
   search.value = "";
   filterCollections();
   document.body.classList.remove("intro");document.body.classList.add("arriving");
+  setTimeout(() => document.body.classList.add("ticker-ready"), 65000);
   archiveMusicUnlocked = true;
   archiveMusicEnabled = true;
   advanceArchiveMusic();
