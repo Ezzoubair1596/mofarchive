@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0d0a17">
 <meta name="description" content="Explore the twelve works of MOF Archive.">
 <title>MOF Archive</title>
@@ -246,6 +247,7 @@ body:not(.intro) #enter,.intro .explore,.intro :is(.top,.directory,.foot,#collec
 #music-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;font-size:.72rem}
 .music-spectrum{display:flex;flex:none;align-items:center;gap:2px;width:26px;height:18px;margin-inline-end:4px;direction:ltr;color:var(--accent)}
 .music-spectrum span{width:3px;height:14px;border-radius:2px;background:currentColor;transform:scaleY(var(--level,.22));opacity:.8}
+.music-spectrum{transform:translateX(3px)}#music-toggle{transform:translateX(-3px)}
 #game-text{white-space:pre-line}
 #game-text:empty{display:none}
 #game-choices:empty{min-height:2.75rem}
@@ -294,6 +296,51 @@ body.player-expanded .main{z-index:3}
 .skip-hint.visible{opacity:1;transform:translateY(0)}
 @media(max-width:899px){.screen video{touch-action:manipulation}}
 .screen.is-expanded[data-fullscreen-fallback]{position:fixed;inset:0;z-index:1000}
+.player-replay{position:absolute;z-index:4;display:grid;place-items:center;width:70px;height:70px;border:1px solid #ffbf90;border-radius:50%;color:#fff7eb;background:#241427cf;box-shadow:0 0 28px #ffac7980;cursor:pointer;transition:transform .2s,background .2s}
+.player-replay[hidden]{display:none}
+.player-replay:hover{transform:scale(1.08);background:#583044}.player-replay svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#music-title{position:relative;display:flex;align-items:center;justify-content:center;line-height:1.2;min-height:1.2em}
+#music-title .music-title-inner{display:block;white-space:nowrap;max-width:100%}
+#music-title .music-title-old{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.intro #enter{opacity:0;animation:enter-reveal .55s ease-out .35s both,invite 1.7s ease-in-out .95s infinite}
+@keyframes enter-reveal{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+.music-dock{display:none}
+.deep-web .atmosphere{background:radial-gradient(ellipse at 50% 0%,#155c6166,transparent 60%),repeating-linear-gradient(0deg,#47f3dd08 0 1px,transparent 1px 38px),#090e18}
+.deep-web .collection-head{position:relative}.deep-web #section-title{color:#8dfbe9;letter-spacing:.09em;text-shadow:0 0 13px #21f6da8c,0 0 39px #11ae9c88}
+.deep-web #section-title:focus{outline:none}
+.deep-web #section-title svg{overflow:visible;animation:secret-lock 2.8s ease-in-out infinite alternate;transform-origin:center}
+@keyframes secret-lock{from{transform:translateY(1px) rotate(-5deg);filter:drop-shadow(0 0 2px #28f4d8)}to{transform:translateY(-4px) rotate(5deg);filter:drop-shadow(0 0 12px #28f4d8)}}
+.deep-web #section-title::after{content:"SECRET PAGE";display:block;margin-inline-start:1em;align-self:center;font-size:.16em;letter-spacing:.22em;color:#a4d9d3;text-shadow:none}
+.deep-web .screen-shell{background:linear-gradient(130deg,#0df5c1,#286583 50%,#7af9e1)}
+.deep-web .screen{background:repeating-linear-gradient(0deg,#9affeb0a 0 1px,transparent 1px 7px),radial-gradient(ellipse at 50% 40%,#13505a,#07121d 75%)}
+.deep-web .queue{border-color:#4be7cc66;background:#0b1820e8}.deep-web .queue-head{color:#9efde8}
+.deep-web #playlist .episode:disabled{opacity:.68;cursor:default;border-color:#58ac9a55;background:#112933;color:#b7e9df}
+.deep-web #screen-message{color:#b9f9ec}.deep-web .screen-message svg{color:#68f5db}
+.deep-web .collection{animation:secret-arrival .8s cubic-bezier(.2,.85,.2,1) both}
+.ticker-track{animation-duration:195s}
+.ticker-hint{display:grid;align-items:center;text-align:center}.ticker-hint>span{grid-area:1/1}
+.ticker-secret{visibility:hidden;color:#97f5e0;text-shadow:0 0 9px #42dac88a}
+.ticker-ready .ticker-secret{visibility:visible}.ticker-ready .ticker-default{visibility:hidden}
+@keyframes secret-arrival{from{opacity:0;filter:blur(12px);transform:translateY(24px) scale(.985)}to{opacity:1;filter:blur(0);transform:none}}
+@media(max-width:899px), (hover:none) and (pointer:coarse){
+  .hero{overflow:visible}
+  .atmosphere{background:radial-gradient(ellipse 95vw 55vw at 50% 8%,#8b473e90,transparent 100%),radial-gradient(ellipse 115vw 80vw at 50% 30%,#38245880,transparent 100%),#110d1c}
+  .intro .hero-reel{top:0;bottom:0;left:0;right:0;width:100%;height:100%;transform:none;mask-image:linear-gradient(0deg,transparent,#000 14%,#000 86%,transparent)}
+  .intro .reel-mask{height:100%;mask-image:none}
+  .intro .reel-track{display:flex;flex-direction:column;width:100%;height:max-content;animation:archive-reel-up 105s linear infinite}
+  .intro .reel-group{display:flex;flex-direction:column;align-items:center;width:100%;height:auto;gap:20px;padding:0 0 20px}
+  .intro .reel-frame{width:100vw;max-width:none;height:auto;aspect-ratio:16/9;flex:none;border:0;border-radius:0;opacity:.37;mask-image:linear-gradient(0deg,transparent 0%,#000 17%,#000 83%,transparent 100%)}
+  .intro .reel-frame video{width:100%;height:100%;object-fit:cover;opacity:.53}
+  #enter{font-size:.64rem;padding:8px 17px;letter-spacing:.08em}
+  .explore{font-size:.65rem;min-height:34px;padding:0 12px;gap:8px}
+  .foot .bar{grid-template-columns:1fr 1fr;padding-block:12px}
+  body:not(.intro) > .archive-music{width:min(20rem,calc(100% - 32px));margin:0 auto 9px;transform:translateX(0)}
+  body.intro > .archive-music{display:none}
+  .music-dock{display:flex;align-items:center;justify-content:center;padding:12px 0 13px;background:transparent}
+  .music-dock .archive-music{width:min(20rem,calc(100% - 32px));margin:0}
+  .intro .music-dock{display:none}
+}
+@keyframes archive-reel-up{from{transform:translateY(0)}to{transform:translateY(-50%)}}
 @media (orientation:portrait) {
   .screen.is-expanded[data-landscape] .player-surface{
     inset:50% auto auto 50%;
@@ -306,10 +353,10 @@ body.player-expanded .main{z-index:3}
 }
 </style>
 <script defer src="./music/spectrum.js"></script>
-<script defer src="./main.js"></script>
+<script defer src="./main.js?v=20261126-6"></script>
 </head>
 <body class="intro" id="top">
-<header class="top"><a href="#collections" class="archive-banner" lang="ar" aria-label="أرشيف مجموعة موف من سنة 2017 إلى سنة 2024"><span class="ticker-track" aria-hidden="true"><span class="ticker-group"><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span></span><span class="ticker-group"><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span><span class="ticker-item" dir="rtl">أرشيف مجموعة موف من سنة 2017 إلى سنة 2024</span><span class="ticker-icon">✦</span></span></span></a></header>
+<header class="top"><div class="archive-banner" tabindex="-1" lang="ar" aria-label="أرشيف مجموعة موف من سنة 2017 إلى سنة 2024"><span class="ticker-track" aria-hidden="true"></span></div></header>
 <main class="main"><div class="atmosphere" aria-hidden="true"></div>
 <div id="home-view" class="wrap layout">
 <section class="hero" aria-label="MOF Archive">
@@ -334,6 +381,7 @@ body.player-expanded .main{z-index:3}
 <div class="screen-layout">
 <div class="screen-shell"><div class="screen" id="player-screen"><div class="player-surface">
 <video controlslist="nodownload" id="player" playsinline webkit-playsinline preload="none" hidden></video>
+<button type="button" id="player-replay" class="player-replay" aria-label="Replay video" title="Replay video" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11a8 8 0 1 1 1.9 5.2"/><path d="M4 5v6h6"/></svg></button>
 <div id="player-tools" class="player-tools" aria-label="Video controls" hidden>
   <input id="player-seek" type="range" min="0" max="1000" value="0" aria-label="Seek" disabled>
   <div class="player-row">
@@ -363,8 +411,8 @@ body.player-expanded .main{z-index:3}
 <button type="button" id="music-toggle" aria-label="تشغيل الموسيقى" title="تشغيل الموسيقى">
 <svg viewBox="0 0 24 24" aria-hidden="true"><path id="music-toggle-icon" d="M7 4v16l13-8z"/></svg>
 </button>
-<span id="music-title" dir="rtl" aria-live="polite">مشغّل الموسيقى</span>
-<span class="music-spectrum" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+<span id="music-title" dir="rtl" aria-live="polite"><span class="music-title-inner">مشغّل الموسيقى</span></span>
+<span class="music-spectrum" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
 <audio id="archive-audio" preload="none"></audio>
 </div><a id="facebook-page" href="https://www.facebook.com/share/g/1AJPg95soq/" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" viewBox="0 0 24 24" fill="white"><path d="M24 12a12 12 0 1 0-13.875 11.855v-8.386H7.078V12h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.925-1.956 1.874V12h3.328l-.532 3.469h-2.796v8.386A12.003 12.003 0 0 0 24 12z"/></svg> PAGE FACEBOOK</a></div></footer>
 <noscript><p style="color:white;text-align:center">Enable JavaScript to browse the archive.</p></noscript>
